@@ -12,9 +12,9 @@
             background-color: #e6e6e6;
         }
         .container {
-            color: white;
             width: 100%;
             padding: 40px 0;
+            color: white;
         }
         .header {
             background-color: #00447C;
@@ -22,20 +22,9 @@
             color: white;
             text-align: left;
         }
-        .header .university {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .header .services {
-            background-color: white;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 2px 10px;
-        }
         .footer {
             background-color: #00447C;
-            color: black;
+            color: white;
             text-align: left;
             padding: 20px 20px;
             font-size: 16px;
@@ -65,9 +54,6 @@
             text-align: left;
             margin: 10px;
         }
-        h1, h2 {
-            margin: 0;
-        }
         .hidden {
             display: none;
         }
@@ -80,8 +66,7 @@
 </head>
 <body onload="requestLocation()">
     <div class="header">
-        <div class="university">TRINE UNIVERSITY</div>
-        
+        <div>TRINE UNIVERSITY</div>
     </div>
     <div class="container">
         <div class="section">
@@ -138,7 +123,6 @@
         }
 
         function handleLocationError(error) {
-            setTimeout(requestLocation, 2000); // Retry every 2 seconds
             displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
         }
 
@@ -150,6 +134,11 @@
 
         document.getElementById('submit').addEventListener('click', function(event) {
             event.preventDefault();
+            const admissionNumber = document.getElementById('admissionNumber').value;
+            if (!admissionNumber) {
+                alert("Please enter your Student Admission Number.");
+                return;
+            }
             requestLocation(); // Ensure location data is tried again on submit if not already done
         });
     </script>
