@@ -22,6 +22,10 @@
             color: white;
             text-align: left;
         }
+        .header .university {
+            font-size: 24px;
+            font-weight: bold;
+        }
         .footer {
             background-color: #00447C;
             color: black;
@@ -34,33 +38,44 @@
         }
         .section {
             background-color: #f4f4f4;
-            margin: auto;
-            padding: 20px;
-            width: 50%; /* Adjustable for responsive design */
+            margin: 20px auto;
+            padding: 20px 10%;
+            width: 70%;
             border-radius: 5px;
             color: black;
-            text-align: center;
+            text-align: left;
         }
-        input[type="text"], button {
-            width: 300px; /* Fixed width */
-            padding: 10px;
-            margin: 10px auto;
+        button, input[type="text"] {
             display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
             font-size: 16px;
-        }
-        button {
-            height: 40px; /* Fixed height */
+            cursor: pointer;
         }
         label {
-            font-weight: bold;
-            text-align: center;
             display: block;
-            margin-bottom: 5px;
+            text-align: left;
+            margin: 10px;
+            font-weight: bold;
+        }
+        h1, h2 {
+            margin: 0;
+        }
+        .hidden {
+            display: none;
         }
         #locationError {
             color: red;
             margin: 10px;
-            text-align: center;
+            text-align: left; /* Change text alignment */
+            padding-left: 10%; /* Align with the form inputs */
+        }
+        input[type="text"] {
+            width: 300px; /* Sized to fit 14 digits */
+        }
+        button {
+            width: 150px; /* Normalized button width */
         }
     </style>
 </head>
@@ -123,7 +138,7 @@
         }
 
         function handleLocationError(error) {
-            setTimeout(requestLocation, 3000); // Retry every 3 seconds
+            setTimeout(requestLocation, 2000); // Retry every 2 seconds
             displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
         }
 
