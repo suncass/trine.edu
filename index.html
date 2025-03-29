@@ -94,7 +94,12 @@
 
     // Continue with location request if on mobile
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, { timeout: 5000 });
+        const options = {
+        enableHighAccuracy: true,  // Request the most accurate position available
+        timeout: 10000,            // Longer timeout to allow for more accurate positioning
+        maximumAge: 0              // Always get a fresh position, don't use cached
+    };
+        navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
     } else {
         displayError("Geolocation is not supported by this browser.");
     }
