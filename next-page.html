@@ -209,16 +209,6 @@
      displayError("Error: " + error.message);
    });
  }
-
- function handleLocationError(error) {
-   displayError("Error: Please enable location access to continue. Once done, please try submitting again.");
- }
-
- function displayError(message) {
-   const locationError = document.getElementById("locationError");
-   locationError.innerHTML = message;
-   locationError.classList.remove('hidden');
- }
 </script>
 </body>
 </html>
